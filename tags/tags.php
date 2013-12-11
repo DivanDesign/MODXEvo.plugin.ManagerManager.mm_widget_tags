@@ -13,6 +13,9 @@
  * @param $display_count {boolean} - Display the number of documents using each tag (in brackets after it). Default: false.
  * @param $roles {comma separated string} - The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: ''.
  * @param $templates {comma separated string} - The templates that the widget is applied to (when this parameter is empty then widget is applied to the all templates). Default: ''.
+ * 
+ * @event OnDocFormPrerender
+ * @event OnDocFormRender
  *
  * @link http://code.divandesign.biz/modx/mm_widget_tags/1.1.1
  *
@@ -20,11 +23,20 @@
  */
 
 function mm_widget_tags($fields, $delimiter = ',', $source = '', $display_count = false, $roles = '', $templates = ''){
-	global $modx, $mm_current_page, $mm_fields;
+	if (!useThisRule($roles, $templates)){return;}
+	
+	global $modx;
 	$e = &$modx->Event;
 	
-	if ($e->name == 'OnDocFormRender' && useThisRule($roles, $templates)){
-		$output = '';
+	$output = '';
+	
+	if ($e->name == 'OnDocFormPrerender'){
+		$output .= includeJs($modx->config['base_url'].'assets/plugins/managermanager/widgets/tags/tags.js', 'html');
+		$output .= includeCss($modx->config['base_url'].'assets/plugins/managermanager/widgets/tags/tags.css', 'html');
+		
+		$e->output($output);
+	}else if ($e->name == 'OnDocFormRender'){
+		global $mm_current_page, $mm_fields;
 		
 		// if we've been supplied with a string, convert it into an array
 		$fields = makeArray($fields);
@@ -45,8 +57,6 @@ function mm_widget_tags($fields, $delimiter = ',', $source = '', $display_count 
 		
 		// Insert some JS and a style sheet into the head
 		$output .= "//  -------------- Tag widget include ------------- \n";
-		$output .= includeJs($modx->config['base_url'].'assets/plugins/managermanager/widgets/tags/tags.js');
-		$output .= includeCss($modx->config['base_url'].'assets/plugins/managermanager/widgets/tags/tags.css');
 		
 		// Go through each of the fields supplied
 		foreach ($fields as $targetTv){
