@@ -1,10 +1,10 @@
 <?php
 /**
  * mm_widget_tags
- * @version 1.1.1 (2013-07-02)
- *
+ * @version 1.1.2 (2013-12-11)
+ * 
  * Adds a tag selection widget to the specified TVs.
- *
+ * 
  * @uses ManagerManager plugin 0.6.
  * 
  * @param $fields {comma separated string} - The name(s) of the template variables this should apply to. @required
@@ -16,9 +16,9 @@
  * 
  * @event OnDocFormPrerender
  * @event OnDocFormRender
- *
- * @link http://code.divandesign.biz/modx/mm_widget_tags/1.1.1
- *
+ * 
+ * @link http://code.divandesign.biz/modx/mm_widget_tags/1.1.2
+ * 
  * @copyright 2013
  */
 
@@ -46,17 +46,12 @@ function mm_widget_tags($fields, $delimiter = ',', $source = '', $display_count 
 		
 		// Does this page's template use any of these TVs? If not, quit.
 		$field_tvs = tplUseTvs($mm_current_page['template'], $fields);
-		if ($field_tvs == false){
-			return;
-		}
+		if ($field_tvs == false){return;}
 		
 		$source_tvs = tplUseTvs($mm_current_page['template'], $source);
-		if ($source_tvs == false){
-			return;
-		}
+		if ($source_tvs == false){return;}
 		
-		// Insert some JS and a style sheet into the head
-		$output .= "//  -------------- Tag widget include ------------- \n";
+		$output .= "//---------- mm_widget_tags :: Begin -----\n";
 		
 		// Go through each of the fields supplied
 		foreach ($fields as $targetTv){
@@ -96,15 +91,19 @@ function mm_widget_tags($fields, $delimiter = ',', $source = '', $display_count 
 			$html_list = '<ul class="mmTagList" id="'.$tv_id.'_tagList">'.$lis.'</ul>';
 			
 			// Insert the list of tags after the field
-			$output .= '
-			//  -------------- Tag widget for '.$targetTv.' ('.$tv_id.') --------------
-			$j("#'.$tv_id.'").after(\''.$html_list.'\');
-			';
+			$output .=
+'
+//mm_widget_tags for “'.$targetTv.'” ('.$tv_id.')
+$j("#'.$tv_id.'").after(\''.$html_list.'\');
+';
 			
 			// Initiate the tagCompleter class for this field
-			$output .= 'var '.$tv_id.'_tags = new TagCompleter("'.$tv_id.'", "'.$tv_id.'_tagList", "'.$delimiter.'"); ';
+			$output .= 'var '.$tv_id.'_tags = new TagCompleter("'.$tv_id.'", "'.$tv_id.'_tagList", "'.$delimiter.'");'."\n";
 		}
-		$e->output($output . "\n");
+		
+		$output .= "//---------- mm_widget_tags :: End -----\n";
+		
+		$e->output($output);
 	}
 }
 ?>
