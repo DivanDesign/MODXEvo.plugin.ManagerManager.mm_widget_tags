@@ -5,7 +5,7 @@
  *
  * Adds a tag selection widget to the specified TVs.
  *
- * @uses ManagerManager plugin 0.5.
+ * @uses ManagerManager plugin 0.6.
  * 
  * @param $fields {comma separated string} - The name(s) of the template variables this should apply to. @required
  * @param $delimiter {string} - The sign that separates tags in the field. Default: ','.
@@ -31,8 +31,8 @@ function mm_widget_tags($fields, $delimiter = ',', $source = '', $display_count 
 	$output = '';
 	
 	if ($e->name == 'OnDocFormPrerender'){
-		$output .= includeJs($modx->config['base_url'].'assets/plugins/managermanager/widgets/tags/tags.js', 'html');
-		$output .= includeCss($modx->config['base_url'].'assets/plugins/managermanager/widgets/tags/tags.css', 'html');
+		$output .= includeJsCss($modx->config['base_url'].'assets/plugins/managermanager/widgets/tags/tags.js', 'html', 'mm_widget_tags', '1.0');
+		$output .= includeJsCss($modx->config['base_url'].'assets/plugins/managermanager/widgets/tags/tags.css', 'html');
 		
 		$e->output($output);
 	}else if ($e->name == 'OnDocFormRender'){
