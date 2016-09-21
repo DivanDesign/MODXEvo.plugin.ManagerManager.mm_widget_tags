@@ -42,7 +42,7 @@ function mm_widget_tags($fields, $delimiter = ',', $source = '', $display_count 
 		$fields = makeArray($fields);
 		
 		// And likewise for the data source (if supplied)
-		$source = (empty($source) ? $fields : makeArray($source));
+		$source = empty($source) ? $fields : makeArray($source);
 		
 		// Does this page's template use any of these TVs? If not, quit.
 		$field_tvs = tplUseTvs($mm_current_page['template'], $fields);
@@ -51,18 +51,11 @@ function mm_widget_tags($fields, $delimiter = ',', $source = '', $display_count 
 		$source_tvs = tplUseTvs($mm_current_page['template'], $source);
 		if ($source_tvs == false){return;}
 		
-		$output .= "//---------- mm_widget_tags :: Begin -----\n";
+		$output .= '//---------- mm_widget_tags :: Begin -----'.PHP_EOL;
 		
 		// Go through each of the fields supplied
 		foreach ($fields as $targetTv){
 			$tv_id = $mm_fields[$targetTv]['fieldname'];
-			
-			// Make an SQL friendly list of fields to look at:
-			//$escaped_sources = array();
-			//foreach ($source as $s){
-			//	$s=substr($s,2,1);
-			//	$escaped_sources[] = "'".$s."'";
-			//}
 			
 			$sql_sources = implode(',', ddTools::unfoldArray($source_tvs));
 			
@@ -100,7 +93,7 @@ $j("#'.$tv_id.'").after(\''.$html_list.'\');
 			$output .= 'var '.$tv_id.'_tags = new TagCompleter("'.$tv_id.'", "'.$tv_id.'_tagList", "'.$delimiter.'");'."\n";
 		}
 		
-		$output .= "//---------- mm_widget_tags :: End -----\n";
+		$output .= '//---------- mm_widget_tags :: End -----'.PHP_EOL;
 		
 		$e->output($output);
 	}
