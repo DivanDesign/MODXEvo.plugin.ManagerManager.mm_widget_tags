@@ -54,15 +54,15 @@ function mm_widget_tags($fields, $tagDelimiter = ',', $sourceFields = '', $displ
 			$fields_item_id = $mm_fields[$fields_item]['fieldname'];
 			
 			// Get the list of current values for this TV
-			$tagsFromAllDocs = $modx->db->makeArray($modx->db->select(
+			$tagsFromAllDocs = $modx->db->getColumn('value', $modx->db->select(
 				'value',
-				$modx->getFullTableName('site_tmplvar_contentvalues'),
+				ddTools::$tables['site_tmplvar_contentvalues'],
 				'tmplvarid IN ('.implode(',', ddTools::unfoldArray($sourceFields)).')'
 			));
 			
 			$tagsToOutput = array();
 			foreach ($tagsFromAllDocs as $tagsFromAllDocs_item){
-				$tagsFromAllDocs_item = explode($tagDelimiter, $tagsFromAllDocs_item['value']);
+				$tagsFromAllDocs_item = explode($tagDelimiter, $tagsFromAllDocs_item);
 				
 				foreach ($tagsFromAllDocs_item as $tagsFromAllDocs_item_item){
 					$tagsToOutput[trim($tagsFromAllDocs_item_item)]++;
