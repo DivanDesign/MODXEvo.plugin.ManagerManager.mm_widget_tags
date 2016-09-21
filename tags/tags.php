@@ -44,49 +44,50 @@ function mm_widget_tags($fields, $delimiter = ',', $source = '', $display_count 
 		// And likewise for the data source (if supplied)
 		$source = empty($source) ? $fields : makeArray($source);
 		
-		$source_tvs = tplUseTvs($mm_current_page['template'], $source);
-		if ($source_tvs == false){return;}
+		$source = tplUseTvs($mm_current_page['template'], $source);
+		if ($source == false){return;}
 		
 		$output .= '//---------- mm_widget_tags :: Begin -----'.PHP_EOL;
 		
 		// Go through each of the fields supplied
-		foreach ($fields as $targetTv){
-			$tv_id = $mm_fields[$targetTv]['fieldname'];
-			
-			$sql_sources = implode(',', ddTools::unfoldArray($source_tvs));
+		foreach ($fields as $fields_item){
+			$fields_item_id = $mm_fields[$fields_item]['fieldname'];
 			
 			// Get the list of current values for this TV
-			$result = $modx->db->select('value', $modx->getFullTableName('site_tmplvar_contentvalues'), 'tmplvarid IN ('.$sql_sources.')');
-			$all_docs = $modx->db->makeArray($result);
+			$tagsFromAllDocs = $modx->db->makeArray($modx->db->select(
+				'value',
+				$modx->getFullTableName('site_tmplvar_contentvalues'),
+				'tmplvarid IN ('.implode(',', ddTools::unfoldArray($source)).')'
+			));
 			
-			$foundTags = array();
-			foreach ($all_docs as $theDoc){
-				$theTags = explode($delimiter, $theDoc['value']);
+			$tagsToOutput = array();
+			foreach ($tagsFromAllDocs as $tagsFromAllDocs_item){
+				$tagsFromAllDocs_item = explode($delimiter, $tagsFromAllDocs_item['value']);
 				
-				foreach ($theTags as $t){
-					$foundTags[trim($t)]++;
+				foreach ($tagsFromAllDocs_item as $tagsFromAllDocs_item_item){
+					$tagsToOutput[trim($tagsFromAllDocs_item_item)]++;
 				}
 			}
 			
 			// Sort the TV values (case insensitively)
-			uksort($foundTags, 'strcasecmp');
+			uksort($tagsToOutput, 'strcasecmp');
 			
-			$lis = '';
-			foreach($foundTags as $t => $c){
-				$lis .= '<li title="Used '.$c.' times">'.jsSafe($t).($display_count?' ('.$c.')':'').'</li>';
+			$htmlTagList = '';
+			foreach($tagsToOutput as $tagsToOutput_item_name => $tagsToOutput_item_count){
+				$htmlTagList .= '<li title="Used '.$tagsToOutput_item_count.' times">'.jsSafe($tagsToOutput_item_name).($display_count ? ' ('.$tagsToOutput_item_count.')' : '').'</li>';
 			}
 			
-			$html_list = '<ul class="mmTagList" id="'.$tv_id.'_tagList">'.$lis.'</ul>';
+			$htmlTagList = '<ul class="mmTagList" id="'.$fields_item_id.'_tagList">'.$htmlTagList.'</ul>';
 			
 			// Insert the list of tags after the field
 			$output .=
 '
-//mm_widget_tags for “'.$targetTv.'” ('.$tv_id.')
-$j("#'.$tv_id.'").after(\''.$html_list.'\');
+//mm_widget_tags for “'.$fields_item.'” ('.$fields_item_id.')
+$j("#'.$fields_item_id.'").after(\''.$htmlTagList.'\');
 ';
 			
 			// Initiate the tagCompleter class for this field
-			$output .= 'var '.$tv_id.'_tags = new TagCompleter("'.$tv_id.'", "'.$tv_id.'_tagList", "'.$delimiter.'");'."\n";
+			$output .= 'var '.$fields_item_id.'_tags = new TagCompleter("'.$fields_item_id.'", "'.$fields_item_id.'_tagList", "'.$delimiter.'");'."\n";
 		}
 		
 		$output .= '//---------- mm_widget_tags :: End -----'.PHP_EOL;
