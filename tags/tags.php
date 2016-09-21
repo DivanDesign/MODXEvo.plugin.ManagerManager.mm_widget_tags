@@ -64,7 +64,7 @@ function mm_widget_tags($fields, $delimiter = ',', $source = '', $display_count 
 			//	$escaped_sources[] = "'".$s."'";
 			//}
 			
-			$sql_sources = implode(',', $source_tvs[0]);
+			$sql_sources = implode(',', ddTools::unfoldArray($source_tvs));
 			
 			// Get the list of current values for this TV
 			$result = $modx->db->select('value', $modx->getFullTableName('site_tmplvar_contentvalues'), 'tmplvarid IN ('.$sql_sources.')');
