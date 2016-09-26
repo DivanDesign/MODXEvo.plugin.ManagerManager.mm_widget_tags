@@ -1,11 +1,11 @@
 <?php
 /**
  * mm_widget_tags
- * @version 1.1.3 (2014-05-15)
+ * @version 1.2 (2016-09-26)
  * 
  * @desc A widget for ManagerManager plugin allowing tags to be added to the documents (the tag list creates automatically for the required TV with all written tags; new tags may be written right in the tag list) on the document edit page.
  * 
- * @uses ManagerManager plugin 0.6.
+ * @uses ManagerManager plugin 0.6.2.
  * 
  * @param $fields {comma separated string} - The name(s) of the template variables this should apply to. @required
  * @param $tagDelimiter {string} - The sign that separates tags in the field. Default: ','.
@@ -17,9 +17,9 @@
  * @event OnDocFormPrerender
  * @event OnDocFormRender
  * 
- * @link http://code.divandesign.biz/modx/mm_widget_tags/1.1.3
+ * @link http://code.divandesign.biz/modx/mm_widget_tags/1.2
  * 
- * @copyright 2014
+ * @copyright 2012–2016
  */
 
 function mm_widget_tags($fields, $tagDelimiter = ',', $sourceFields = '', $displayCount = false, $roles = '', $templates = ''){
